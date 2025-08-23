@@ -5447,38 +5447,54 @@
                         this.IOOl1 = t;
                         this.size = e != null ? e : 100;
 
-                        // базовая геометрия Three.js
+                        // Вызов родительского конструктора (если есть)
+                        i.lIIOI.constructor.call(this);
+
+                        this.II1OI = false;
                         this.geometry = new THREE.BufferGeometry();
-                        this.geometry.boundingBox = new THREE.Box3(
+                        this.geometry.IIlI0 = new THREE.Box3(
                             new THREE.Vector3(-2e4, -2e4, -2e4),
                             new THREE.Vector3(2e4, 2e4, 2e4)
                         );
                         this.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 4e4);
 
                         // массивы данных
-                        this.vertices = new Float32Array(3 * this.size); // x, y, z
-                        this.color = new Float32Array(3 * this.size);    // RGB
+                        this.vertices = new Float32Array(3 * this.size);
+                        this.color = new Float32Array(3 * this.size);
                         this.time = new Float32Array(this.size);
+                        this.figure = new Float32Array(this.size);
                         this.fill = new Float32Array(this.size);
+                        this.lOOII = new Float32Array(this.size);
                         this.opac = new Float32Array(this.size);
                         this.speed = new Float32Array(this.size);
-                        this.figure = new Float32Array(this.size);
-                        this.lOOII = new Float32Array(this.size);
 
-                        // индексы HUD
-                        this.bar_size = 5; // минимальное количество элементов
+                        // HUD индексы
+                        this.bar_size = 5; // минималистично
                         this.display_size = 1 + this.bar_size + 1;
-                        this.shield_index = 0;
+                        this.heart_index = 11;
+                        this.level_index = 12;
+                        this.shield_index = 14;
                         this.generator_index = this.shield_index + this.display_size;
                         this.crystal_index = this.generator_index + this.display_size;
+                        this.start_index = this.crystal_index + this.display_size;
+                        this.index = this.start_index;
 
-                        // статус игрока
-                        this.score = 0;
-                        this.shield = 100;
-                        this.generator = 100;
-                        this.crystals = 0;
+                        // игрок
+                        this.I11lI = Date.now();
+                        this.score = -1;
+                        this.score_target = 0;
+                        this.shield = 0;
+                        this.generator = 0;
+                        this.shield_max = 0;
+                        this.generator_max = 0;
+                        this.generator_depleted = false;
+                        this.lIIlI = 0;
+                        this.lives = -1;
+                        this.livesblink = false;
+                        this.lvl = 1;
+                        this.last_shield_warning = 0;
 
-                        // инициализация точек
+                        // Инициализация точек (минималистично)
                         for (let s = 0; s < this.size; s++) {
                             this.vertices[3 * s] = 0;       // x
                             this.vertices[3 * s + 1] = 0;   // y
@@ -5487,21 +5503,24 @@
                             this.color[3 * s + 1] = 1;
                             this.color[3 * s + 2] = 1;
                             this.time[s] = 0;
+                            this.figure[s] = 0;
                             this.fill[s] = 1;
+                            this.lOOII[s] = 0.025;
                             this.opac[s] = 1;
                             this.speed[s] = 0;
-                            this.figure[s] = 0;
-                            this.lOOII[s] = 0.03; // минимальный размер точек
                         }
 
-                        // инициализация индикаторов
-                        this.initBar(this.shield_index, 0.1, 1, 1, 1, 5);
-                        this.initBar(this.generator_index, 0.12, 1, 1, 1, 5);
-                        this.initBar(this.crystal_index, 0.14, 1, 1, 1, 5);
+                        // Инициализация индикаторов HUD
+                        this.initBar(this.shield_index, 0.12, 0.5, 0.9, 1, 5);
+                        this.initBar(this.generator_index, 0.16, 1, 0.9, 0.5, 5);
+                        this.initBar(this.crystal_index, 0.2, 1, 0.5, 0.5, 5);
 
                         this.setBar(this.shield_index, this.shield, 100);
                         this.setBar(this.generator_index, this.generator, 100);
-                        this.setBar(this.crystal_index, this.crystals, 100);
+                        this.setBar(this.crystal_index, this.lIIlI, 100);
+
+                        this.updateLives();
+                        this.updateLevel();
                     }
 
                     return extend(i, e), i.prototype.hide = function () {
