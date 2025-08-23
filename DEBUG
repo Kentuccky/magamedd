@@ -4637,12 +4637,34 @@
                             ctx.fill();
 
                             // ник игрока
-                            if (playerName) {
-                                ctx.fillStyle = "white"; // можно использовать "hsla(" + e + ",100%,90%,1)" для цвета по hue
-                                ctx.font = "0.08px Arial"; // маленький размер с учётом масштаба
-                                ctx.textAlign = "center";
-                                ctx.textBaseline = "bottom";
-                                ctx.fillText(playerName, 0, -0.04); // немного выше точки игрока
+                            if (this.view != null) {
+                                let u = 2; // смещение внутри DataView
+                                let m = Math.min(10, this.view.getUint8(1));
+
+                                for (let o = 0; o < m; o++) {
+                                    let id = this.view.getUint8(u);
+                                    let score = this.view.getUint32(u + 4, true) & 16777215;
+                                    u += 8;
+
+                                    let name = this.IOOl1.names.get(id) || "Unknown";
+
+                                    // координаты игрока на радаре (примерно, нужно заменить на реальные)
+                                    let playerX = (Math.random() - 0.5) * 2; // [-1,1]
+                                    let playerY = (Math.random() - 0.5) * 2; // [-1,1]
+
+                                    // точка игрока
+                                    ctx.fillStyle = "hsla(" + e + ",100%,90%,1)";
+                                    ctx.beginPath();
+                                    ctx.arc(playerX, playerY, 0.03, 0, Math.PI * 2);
+                                    ctx.fill();
+
+                                    // ник игрока
+                                    ctx.fillStyle = "white";
+                                    ctx.font = "0.08px Arial";
+                                    ctx.textAlign = "center";
+                                    ctx.textBaseline = "bottom";
+                                    ctx.fillText(name, playerX, playerY - 0.04);
+                                }
                             }
 
                             ctx.restore();
