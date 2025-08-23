@@ -4638,7 +4638,7 @@
 
                             // ник игрока
                             if (this.view != null) {
-                                let u = 2; // смещение внутри DataView
+                                let u = 2;
                                 let m = Math.min(10, this.view.getUint8(1));
 
                                 for (let o = 0; o < m; o++) {
@@ -4648,17 +4648,14 @@
 
                                     let name = this.IOOl1.names.get(id) || "Unknown";
 
-                                    // координаты игрока на радаре (примерно, нужно заменить на реальные)
                                     let playerX = (Math.random() - 0.5) * 2; // [-1,1]
                                     let playerY = (Math.random() - 0.5) * 2; // [-1,1]
 
-                                    // точка игрока
                                     ctx.fillStyle = "hsla(" + e + ",100%,90%,1)";
                                     ctx.beginPath();
                                     ctx.arc(playerX, playerY, 0.03, 0, Math.PI * 2);
                                     ctx.fill();
 
-                                    // ник игрока
                                     ctx.fillStyle = "white";
                                     ctx.font = "0.08px Arial";
                                     ctx.textAlign = "center";
@@ -5447,39 +5444,66 @@
                     return i.prototype = e.prototype, t.prototype = new i, t.lIIOI = e.prototype, t
                 }, hasProp = {}.hasOwnProperty, this.Figures = function (e) {
                     function i(t, e) {
-                        var s, l, n, a;
-                        for (this.IOOl1 = t, this.size = null != e ? e : 100, i.lIIOI.constructor.call(this), this
-                            .II1OI = !1, this.geometry = new THREE.BufferGeometry, this.geometry.IIlI0 = new THREE
-                            .Box3(new THREE.Vector3(-2e4, -2e4, -2e4), new THREE.Vector3(2e4, 2e4, 2e4)), this
-                            .geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 4e4), this
-                            .vertices = new Float32Array(3 * this.size), this.time = new Float32Array(this.size),
-                            this.figure = new Float32Array(this.size), this.fill = new Float32Array(this.size), this
-                            .lOOII = new Float32Array(this.size), this.opac = new Float32Array(this.size), this
-                            .color = new Float32Array(3 * this.size), this.speed = new Float32Array(this.size), this
-                            .time = new Float32Array(this.size), this.bar_size = 9, this.display_size = 1 + this
-                            .bar_size + 3, this.heart_index = 11, this.level_index = 12, this.shield_index = 14,
-                            this.generator_index = this.shield_index + this.display_size, this.crystal_index = this
-                            .generator_index + this.display_size, this.start_index = this.crystal_index + this
-                            .display_size, this.index = this.start_index, this.I11lI = Date.now(), this.score = -1,
-                            this.score_target = 0, this.shield = 0, this.generator = 0, this.shield_max = 0, this
-                            .generator_max = 0, this.generator_depleted = !1, this.lIIlI = 0, this.lives = -1, this
-                            .livesblink = !1, this.lvl = 1, this.last_shield_warning = 0, s = l = 0; l <= 9; s =
-                            l += 1) this.vertices[3 * s] = .02 * s + .02, this.vertices[3 * s + 1] = .05, this
-                            .vertices[3 * s + 2] = 1e3, this.figure[s] = 0, this.color[3 * s] = .8, this.color[3 *
-                                s + 1] = .9, this.color[3 * s + 2] = 1, this.time[s] = 0, this.lOOII[s] = .025, this
-                            .opac[s] = 1, this.fill[s] = 1, this.speed[s] = 0;
-                        for (s = 10, this.vertices[3 * s] = .5, this.vertices[3 * s + 1] = .5, this.vertices[3 * s +
-                                2] = 1e3, this.figure[s] = 14, this.color[3 * s] = 1, this.color[3 * s + 1] = 1,
-                            this.color[3 * s + 2] = 1, this.time[s] = 0, this.lOOII[s] = .025, this.opac[s] = 1,
-                            this.fill[s] = 1, s = n = 11, a = this.size - 1; n <= a; s = n += 1) this.vertices[3 *
-                            s] = 0, this.vertices[3 * s + 1] = 0, this.vertices[3 * s + 2] = 1e3, this.color[3 *
-                            s] = .8, this.color[3 * s + 1] = .9, this.color[3 * s + 2] = 1;
-                        this.OIIOI(), this.initBar(this.shield_index, .12, .5, .9, 1, 13), this.initBar(this
-                            .generator_index, .16, 1, .9, .5, 12), this.initBar(this.crystal_index, .2, 1, .5,
-                            .5, 11), this.setBar(this.shield_index, this.shield, 100), this.setBar(this
-                            .generator_index, this.generator, 100), this.setBar(this.crystal_index, this.lIIlI,
-                            100), this.updateLives(), this.updateLevel()
+                        this.IOOl1 = t;
+                        this.size = e != null ? e : 100;
+
+                        // базовая геометрия Three.js
+                        this.geometry = new THREE.BufferGeometry();
+                        this.geometry.boundingBox = new THREE.Box3(
+                            new THREE.Vector3(-2e4, -2e4, -2e4),
+                            new THREE.Vector3(2e4, 2e4, 2e4)
+                        );
+                        this.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 4e4);
+
+                        // массивы данных
+                        this.vertices = new Float32Array(3 * this.size); // x, y, z
+                        this.color = new Float32Array(3 * this.size);    // RGB
+                        this.time = new Float32Array(this.size);
+                        this.fill = new Float32Array(this.size);
+                        this.opac = new Float32Array(this.size);
+                        this.speed = new Float32Array(this.size);
+                        this.figure = new Float32Array(this.size);
+                        this.lOOII = new Float32Array(this.size);
+
+                        // индексы HUD
+                        this.bar_size = 5; // минимальное количество элементов
+                        this.display_size = 1 + this.bar_size + 1;
+                        this.shield_index = 0;
+                        this.generator_index = this.shield_index + this.display_size;
+                        this.crystal_index = this.generator_index + this.display_size;
+
+                        // статус игрока
+                        this.score = 0;
+                        this.shield = 100;
+                        this.generator = 100;
+                        this.crystals = 0;
+
+                        // инициализация точек
+                        for (let s = 0; s < this.size; s++) {
+                            this.vertices[3 * s] = 0;       // x
+                            this.vertices[3 * s + 1] = 0;   // y
+                            this.vertices[3 * s + 2] = 1e3; // z
+                            this.color[3 * s] = 1;          // белый
+                            this.color[3 * s + 1] = 1;
+                            this.color[3 * s + 2] = 1;
+                            this.time[s] = 0;
+                            this.fill[s] = 1;
+                            this.opac[s] = 1;
+                            this.speed[s] = 0;
+                            this.figure[s] = 0;
+                            this.lOOII[s] = 0.03; // минимальный размер точек
+                        }
+
+                        // инициализация индикаторов
+                        this.initBar(this.shield_index, 0.1, 1, 1, 1, 5);
+                        this.initBar(this.generator_index, 0.12, 1, 1, 1, 5);
+                        this.initBar(this.crystal_index, 0.14, 1, 1, 1, 5);
+
+                        this.setBar(this.shield_index, this.shield, 100);
+                        this.setBar(this.generator_index, this.generator, 100);
+                        this.setBar(this.crystal_index, this.crystals, 100);
                     }
+
                     return extend(i, e), i.prototype.hide = function () {
                         return this.lI101.visible = !1
                     }, i.prototype.I10I0 = function () {
