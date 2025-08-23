@@ -4543,171 +4543,102 @@
                     }, e
                 }(I1O01), this.IOO01 = function () {
                     function t(t) {
-                        this.IOOl1 = t;
-
-                        // --- основной канвас для радара ---
-                        this.canvas = document.createElement("canvas");
-                        this.canvas.width = 512;
-                        this.canvas.height = 512;
-
-                        if (this.IOOl1.mode.radar_zoom > 1 || this.IOOl1.mode.high_def_radar) {
-                            this.canvas.width = 1024;
-                            this.canvas.height = 1024;
-                        }
-
-                        // --- дополнительный слой для игроков/меток ---
-                        this.canvas2 = document.createElement("canvas");
-                        this.canvas2.width = 512;
-                        this.canvas2.height = 512;
-
-                        this.O0OO1 = new THREE.Group();
-
-                        // --- текстуры ---
-                        this.texture = new THREE.Texture(this.canvas);
-                        this.texture.minFilter = THREE.LinearFilter;
-                        this.texture.wrapS = this.texture.wrapT = THREE.RepeatWrapping;
-                        this.texture.repeat.set(1 / this.IOOl1.mode.radar_zoom, 1 / this.IOOl1.mode.radar_zoom);
-
-                        this.texture2 = new THREE.Texture(this.canvas2);
-                        this.texture2.minFilter = THREE.LinearFilter;
-
-                        // --- геометрия и материалы ---
-                        this.O1lI1 = new THREE.PlaneGeometry(1, 1);
-                        this.material = new THREE.MeshBasicMaterial({
-                            map: this.texture,
-                            transparent: true,
-                            depthTest: false,
-                            depthWrite: false,
-                            blending: THREE.AdditiveBlending
-                        });
-
-                        this.m1 = new THREE.Mesh(this.O1lI1, this.material);
-
-                        this.geom2 = new THREE.PlaneGeometry(1, 1);
-                        this.material2 = new THREE.MeshBasicMaterial({
-                            map: this.texture2,
-                            transparent: true,
-                            depthTest: false,
-                            depthWrite: false
-                        });
-
-                        this.m2 = new THREE.Mesh(this.geom2, this.material2);
-
-                        this.O0OO1.add(this.m2);
-                        this.O0OO1.add(this.m1);
-                        this.m1.position.z = -1;
-
-                        // --- кастомная отрисовка нового дизайна радара ---
-                        this.drawRadarBackground();
+                        this.IOOl1 = t, this.canvas = document.createElement("canvas"), this.canvas.width = 512,
+                            this.canvas.height = 512,
+                            (this.IOOl1.mode.radar_zoom > 1 || this.IOOl1.mode.high_def_radar) && (this.canvas
+                                .width = 1024, this.canvas.height = 1024), this.canvas2 = document.createElement(
+                                "canvas"), this.canvas2.width = 512, this.canvas2.height = 512, this.O0OO1 =
+                            new THREE.Group, this.texture = new THREE.Texture(this.canvas), this.texture.minFilter =
+                            THREE.LinearFilter, this.texture.wrapS = this.texture.wrapT = THREE.RepeatWrapping, this
+                            .texture.repeat.set(1 / this.IOOl1.mode.radar_zoom, 1 / this.IOOl1.mode.radar_zoom),
+                            this.texture2 = new THREE.Texture(this.canvas2), this.texture2.minFilter = THREE
+                            .LinearFilter, this.O1lI1 = new THREE.PlaneGeometry(1, 1), this.material = new THREE
+                            .MeshBasicMaterial({
+                                map: this.texture,
+                                transparent: !0,
+                                depthTest: !1,
+                                depthWrite: !1,
+                                blending: THREE.AdditiveBlending
+                            }), this.m1 = new THREE.Mesh(this.O1lI1, this.material), this.geom2 = new THREE
+                            .PlaneGeometry(1, 1), this.material2 = new THREE.MeshBasicMaterial({
+                                map: this.texture2,
+                                transparent: !0,
+                                depthTest: !1,
+                                depthWrite: !1
+                            }), this.m2 = new THREE.Mesh(this.geom2, this.material2), this.O0OO1.add(this.m2), this
+                            .O0OO1.add(this.m1), this.m1.position.z = -1
                     }
+                    return t.prototype.IOlIO = function (t, e) {
+                        var i;
+                        t /= this.IOOl1.size, e /= this.IOOl1.size, i = .5 - .5 / this.IOOl1.mode.radar_zoom,
+                            this.texture.offset.x = t + i, this.texture.offset.y = e + i
+                    }, t.prototype.setHue = function (t) {
+                        if (t !== this.hue && null != this.data) return this.OlI1O(this.data, t)
+                    }, t.prototype.OlII0 = function (t) {
+                        var e, i, s, l, n, a, o, r, h, u;
+                        for (i = this.canvas.getContext("2d"), i.save(), i.clearRect(0, 0, this.canvas.width,
+                                this.canvas.height), i.translate(this.canvas.width / 2, this.canvas.height / 2),
+                            i.scale(this.canvas.width / 2, this.canvas.height / 2), e = new OOlll(t, this.IOOl1
+                                .lllO1, this.IOOl1.mode), u = {}, i.fillStyle = "hsla(" + this.hue +
+                            ",50%,50%,.4)", l = a = -this.IOOl1.lllO1, r = this.IOOl1.lllO1 - 1; a <= r; l =
+                            a += 1)
+                            for (n = o = -this.IOOl1.lllO1, h = this.IOOl1.lllO1 - 1; o <= h; n = o += 1) e.get(
+                                l, n, u), u.on && (i.beginPath(), i.arc(u.x / this.IOOl1.lllO1, -u.y / this
+                                .IOOl1.lllO1, u.size / this.IOOl1.lllO1, 0, 180 * THREE.Math.DEG2RAD *
+                                2, !0), i.fill());
+                        return s = i.createRadialGradient(0, 0, 0, 0, 0, .05), s.addColorStop(0,
+                                "rgba(255,255,255,1)"), s.addColorStop(.5, "hsla(" + this.hue + ",90%,80%,1)"),
+                            s.addColorStop(1, "hsla(" + this.hue + ",90%,80%,0)"), i.fillStyle = s, i.fillRect(-
+                                .05, -.05, .1, .1), this.IOOl1.mode.drawRadarInfo(i), i.restore(), this.texture
+                            .needsUpdate = !0
+                    }, t.prototype.OlI1O = function (t, e) {
+                        return this.data = t, this.hue = e, this.OlII0(this.data.seed), this.update2(this.data,
+                            this.hue)
+                    }, t.prototype.update2 = function (t, e) {
+                            var ctx = this.canvas2.getContext("2d");
+                            ctx.save();
+                            ctx.translate(this.canvas2.width / 2, this.canvas2.height / 2);
+                            ctx.scale(this.canvas2.width / 2, this.canvas2.height / 2);
 
-                    // Новый метод — красивый дизайн радара
-                    t.prototype.drawRadarBackground = function () {
-                        let ctx = this.canvas.getContext("2d");
-                        let size = this.canvas.width;
-                        let center = size / 2;
+                            // очистка
+                            ctx.clearRect(-1, -1, 2, 2);
 
-                        // Очистка
-                        ctx.clearRect(0, 0, size, size);
-
-                        // --- фон с радиальным градиентом ---
-                        let gradient = ctx.createRadialGradient(center, center, 0, center, center, center);
-                        gradient.addColorStop(0, "rgba(0, 0, 0, 0.9)");
-                        gradient.addColorStop(1, "rgba(0, 0, 0, 0.6)");
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(0, 0, size, size);
-
-                        // --- окружности (сетка радара) ---
-                        ctx.strokeStyle = "rgba(0, 255, 0, 0.4)";
-                        ctx.lineWidth = 2;
-                        for (let r = 50; r < center; r += 50) {
+                            // фон
+                            ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                             ctx.beginPath();
-                            ctx.arc(center, center, r, 0, Math.PI * 2);
-                            ctx.stroke();
-                        }
+                            ctx.arc(0, 0, 1, 0, Math.PI * 2);
+                            ctx.fill();
 
-                        // --- линии по осям ---
-                        ctx.beginPath();
-                        ctx.moveTo(center, 0);
-                        ctx.lineTo(center, size);
-                        ctx.moveTo(0, center);
-                        ctx.lineTo(size, center);
-                        ctx.stroke();
+                            // концентрические круги
+                            ctx.strokeStyle = "hsla(" + e + ",100%,70%,0.3)";
+                            ctx.lineWidth = 0.005;
+                            for (let r = 0.25; r <= 1; r += 0.25) {
+                                ctx.beginPath();
+                                ctx.arc(0, 0, r, 0, Math.PI * 2);
+                                ctx.stroke();
+                            }
 
-                        // --- внешняя рамка ---
-                        ctx.strokeStyle = "rgba(0, 255, 0, 0.8)";
-                        ctx.lineWidth = 3;
-                        ctx.beginPath();
-                        ctx.arc(center, center, center - 5, 0, Math.PI * 2);
-                        ctx.stroke();
-
-                        // Обновление текстуры
-                        this.texture.needsUpdate = true;
-                    };
-
-                    t.prototype.update2 = function (t, e) {
-                        var ctx, gradient, step, radius, angleStep, i;
-
-                        // контекст для второго канваса (динамический слой)
-                        ctx = this.canvas2.getContext("2d");
-                        ctx.save();
-                        ctx.translate(this.canvas2.width / 2, this.canvas2.height / 2);
-                        ctx.scale(this.canvas2.width / 2, this.canvas2.height / 2);
-                        ctx.clearRect(-1, -1, 2, 2);
-
-                        // фон — мягкий затемнённый круг
-                        gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 1.2);
-                        gradient.addColorStop(0, "rgba(0,0,0,0.9)");
-                        gradient.addColorStop(1, "rgba(0,0,0,0.4)");
-                        ctx.fillStyle = gradient;
-                        ctx.beginPath();
-                        ctx.arc(0, 0, 1, 0, Math.PI * 2);
-                        ctx.fill();
-
-                        // круги-сетка
-                        ctx.strokeStyle = "hsla(" + e + ",80%,60%,0.3)";
-                        ctx.lineWidth = 0.005;
-                        for (radius = 0.2; radius <= 1; radius += 0.2) {
+                            // крест по центру
+                            ctx.strokeStyle = "hsla(" + e + ",100%,80%,0.4)";
+                            ctx.lineWidth = 0.004;
                             ctx.beginPath();
-                            ctx.arc(0, 0, radius, 0, Math.PI * 2);
+                            ctx.moveTo(-1, 0);
+                            ctx.lineTo(1, 0);
                             ctx.stroke();
-                        }
-
-                        // деления по углам (оси)
-                        ctx.strokeStyle = "hsla(" + e + ",90%,70%,0.3)";
-                        ctx.lineWidth = 0.003;
-                        for (i = 0; i < 4; i++) {
                             ctx.beginPath();
-                            ctx.moveTo(0, 0);
-                            ctx.lineTo(Math.cos(Math.PI/2 * i), Math.sin(Math.PI/2 * i));
+                            ctx.moveTo(0, -1);
+                            ctx.lineTo(0, 1);
                             ctx.stroke();
-                        }
 
-                        // вращающийся "луч сканера"
-                        var time = Date.now() * 0.002; // вращение со временем
-                        var sweepAngle = (time % (2*Math.PI));
-                        var sweepWidth = Math.PI / 6; // ширина луча ~30°
+                            // точка игрока
+                            ctx.fillStyle = "hsla(" + e + ",100%,90%,1)";
+                            ctx.beginPath();
+                            ctx.arc(0, 0, 0.03, 0, Math.PI * 2);
+                            ctx.fill();
 
-                        var scanGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
-                        scanGrad.addColorStop(0, "hsla(" + e + ",100%,70%,0.4)");
-                        scanGrad.addColorStop(1, "hsla(" + e + ",100%,70%,0)");
-                        ctx.fillStyle = scanGrad;
-
-                        ctx.beginPath();
-                        ctx.moveTo(0, 0);
-                        ctx.arc(0, 0, 1, sweepAngle - sweepWidth, sweepAngle + sweepWidth);
-                        ctx.closePath();
-                        ctx.fill();
-
-                        // центр радара
-                        ctx.fillStyle = "hsla(" + e + ",100%,90%,1)";
-                        ctx.beginPath();
-                        ctx.arc(0, 0, 0.03, 0, Math.PI * 2);
-                        ctx.fill();
-
-                        ctx.restore();
-                        this.texture2.needsUpdate = !0;
-                    }, t.prototype.updateRepulsor = function (t) {
+                            ctx.restore();
+                            this.texture2.needsUpdate = true;
+                        }, t.prototype.updateRepulsor = function (t) {
                         var e, i, s, l, n, a, o;
                         if (null == this.repulsor_backup && (this.repulsor_backup = document.createElement(
                                     "canvas"), this.repulsor_backup.width = this.canvas.width, this
