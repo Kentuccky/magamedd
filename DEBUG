@@ -4639,29 +4639,53 @@
                             // ник игрока
                             if (this.view != null) {
                                 let u = 2;
-                                let m = Math.min(10, this.view.getUint8(1));
+                                let m = Math.min(10, this.view.getUint8(1)); // макс. 10 игроков
 
                                 for (let o = 0; o < m; o++) {
                                     let id = this.view.getUint8(u);
-                                    let score = this.view.getUint32(u + 4, true) & 16777215;
+                                    let score = this.view.getUint32(u + 4, true) & 0xFFFFFF; // score 24bit
                                     u += 8;
 
-                                    let name = this.IOOl1.names.get(id) || "Unknown";
+                                    let name = "Unknown";
+                                    if (this.IOOl1 && this.IOOl1.names && this.IOOl1.names.get) {
+                                        name = this.IOOl1.names.get(id) || "Unknown";
+                                    }
 
-                                    let playerX = (Math.random() - 0.5) * 2; // [-1,1]
-                                    let playerY = (Math.random() - 0.5) * 2; // [-1,1]
+                                    // -----------------------------
+                                    // Получаем реальную позицию игрока
+                                    // -----------------------------
+                                    let playerX = 0, playerY = 0, hp = "??";
+                                    if (window.shipsArray) {
+                                        const ship = window.shipsArray.find(s => s.l10Il && s.l10Il.id === id);
+                                        if (ship) {
+                                            if (ship.O0OO1 && ship.O0OO1.position) {
+                                                playerX = ship.O0OO1.position.x;
+                                                playerY = ship.O0OO1.position.y;
+                                            }
+                                            hp = ship.hp || "??";
+                                        }
+                                    } else {
+                                        // если корабли ещё не перехвачены — временно ставим случайные координаты
+                                        playerX = (Math.random() - 0.5) * 2;
+                                        playerY = (Math.random() - 0.5) * 2;
+                                    }
 
-                                    // точка игрока
-                                    ctx.fillStyle = "hsla(" + e + ",100%,90%,1)";
+                                    // -----------------------------
+                                    // Рисуем точку на canvas
+                                    // -----------------------------
+                                    ctx.fillStyle = "hsla(" + (o*36) + ",100%,90%,1)";
                                     ctx.beginPath();
                                     ctx.arc(playerX, playerY, 0.03, 0, Math.PI * 2);
                                     ctx.fill();
 
+                                    // -----------------------------
+                                    // Выводим текст: ник, score, HP, позиция
+                                    // -----------------------------
                                     ctx.fillStyle = "white";
                                     ctx.font = "0.08px Arial";
                                     ctx.textAlign = "center";
                                     ctx.textBaseline = "bottom";
-                                    ctx.fillText(name, playerX, playerY - 0.04);
+                                    ctx.fillText(`${name} | Score: ${score} | HP: ${hp} | (${playerX.toFixed(2)},${playerY.toFixed(2)})`, playerX, playerY - 0.04);
                                 }
                             }
 
