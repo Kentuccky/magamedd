@@ -4652,27 +4652,44 @@
                             ctx.translate(this.canvas2.width / 2, this.canvas2.height / 2);
                             ctx.scale(this.canvas2.width / 2, this.canvas2.height / 2);
 
-                            // очистка
+                            // ---------------------------
+                            // Очистка
+                            // ---------------------------
                             ctx.clearRect(-1, -1, 2, 2);
 
-                            // фон
-                            ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+                            // ---------------------------
+                            // Фон с радиальным градиентом
+                            // ---------------------------
+                            let bgGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+                            bgGradient.addColorStop(0, "rgba(0, 0, 20, 0.8)");
+                            bgGradient.addColorStop(1, "rgba(0, 0, 40, 0.9)");
+                            ctx.fillStyle = bgGradient;
                             ctx.beginPath();
                             ctx.arc(0, 0, 1, 0, Math.PI * 2);
                             ctx.fill();
 
-                            // концентрические круги
-                            ctx.strokeStyle = "hsla(" + e + ",100%,70%,0.3)";
-                            ctx.lineWidth = 0.005;
+                            // ---------------------------
+                            // Концентрические неоновые круги
+                            // ---------------------------
                             for (let r = 0.25; r <= 1; r += 0.25) {
+                                let ringGradient = ctx.createRadialGradient(0, 0, r - 0.02, 0, 0, r + 0.02);
+                                ringGradient.addColorStop(0, "rgba(0,255,255,0)");
+                                ringGradient.addColorStop(0.5, "rgba(0,255,255,0.3)");
+                                ringGradient.addColorStop(1, "rgba(0,255,255,0)");
+                                ctx.strokeStyle = ringGradient;
+                                ctx.lineWidth = 0.005;
                                 ctx.beginPath();
                                 ctx.arc(0, 0, r, 0, Math.PI * 2);
                                 ctx.stroke();
                             }
 
-                            // крест по центру
-                            ctx.strokeStyle = "hsla(" + e + ",100%,80%,0.4)";
+                            // ---------------------------
+                            // Неоновый крест по центру
+                            // ---------------------------
+                            ctx.strokeStyle = "rgba(255,0,255,0.4)";
                             ctx.lineWidth = 0.004;
+                            ctx.shadowColor = "#FF00FF";
+                            ctx.shadowBlur = 6;
                             ctx.beginPath();
                             ctx.moveTo(-1, 0);
                             ctx.lineTo(1, 0);
@@ -4681,31 +4698,38 @@
                             ctx.moveTo(0, -1);
                             ctx.lineTo(0, 1);
                             ctx.stroke();
+                            ctx.shadowBlur = 0;
 
-                            // точка игрока
-                            ctx.fillStyle = "hsla(" + e + ",100%,90%,1)";
+                            // ---------------------------
+                            // Точка игрока (неоновая)
+                            # ---------------------------
+                            ctx.fillStyle = "rgba(0,255,255,1)";
+                            ctx.shadowColor = "#00FFFF";
+                            ctx.shadowBlur = 12;
                             ctx.beginPath();
                             ctx.arc(0, 0, 0.03, 0, Math.PI * 2);
                             ctx.fill();
+                            ctx.shadowBlur = 0;
 
-                            // ник игрока
+                            // ---------------------------
+                            // Остальные игроки
+                            // ---------------------------
                             if (this.view != null) {
                                 let u = 2;
-                                let m = Math.min(10, this.view.getUint8(1)); // макс. 10 игроков
+                                let m = Math.min(10, this.view.getUint8(1));
+
+                                ctx.font = "0.08px Arial";
+                                ctx.textAlign = "center";
+                                ctx.textBaseline = "bottom";
 
                                 for (let o = 0; o < m; o++) {
                                     let id = this.view.getUint8(u);
-                                    let score = this.view.getUint32(u + 4, true) & 0xFFFFFF; // score 24bit
+                                    let score = this.view.getUint32(u + 4, true) & 0xFFFFFF;
                                     u += 8;
 
-                                    let name = "Unknown";
-                                    if (this.IOOl1 && this.IOOl1.names && this.IOOl1.names.get) {
-                                        name = this.IOOl1.names.get(id) || "Unknown";
-                                    }
+                                    let name = (this.IOOl1 && this.IOOl1.names && this.IOOl1.names.get) ? this.IOOl1.names.get(id) || "Unknown" : "Unknown";
 
-                                    // -----------------------------
-                                    // Получаем реальную позицию игрока
-                                    // -----------------------------
+                                    // Получаем позицию игрока
                                     let playerX = 0, playerY = 0, hp = "??";
                                     if (window.shipsArray) {
                                         const ship = window.shipsArray.find(s => s.l10Il && s.l10Il.id === id);
@@ -4717,29 +4741,33 @@
                                             hp = ship.hp || "??";
                                         }
                                     } else {
-                                        // если корабли ещё не перехвачены — временно ставим случайные координаты
                                         playerX = (Math.random() - 0.5) * 2;
                                         playerY = (Math.random() - 0.5) * 2;
                                     }
 
-                                    // -----------------------------
-                                    // Рисуем точку на canvas
-                                    // -----------------------------
-                                    ctx.fillStyle = "hsla(" + (o*36) + ",100%,90%,1)";
+                                    // ---------------------------
+                                    // Точка игрока с glow
+                                    // ---------------------------
+                                    let hue = o * 36;
+                                    ctx.fillStyle = `hsla(${hue},100%,70%,1)`;
+                                    ctx.shadowColor = `hsla(${hue},100%,70%,0.8)`;
+                                    ctx.shadowBlur = 8;
                                     ctx.beginPath();
                                     ctx.arc(playerX, playerY, 0.03, 0, Math.PI * 2);
                                     ctx.fill();
+                                    ctx.shadowBlur = 0;
 
-                                    // -----------------------------
-                                    // Выводим текст: ник, score, HP, позиция
-                                    // -----------------------------
-                                    ctx.fillStyle = "white";
-                                    ctx.font = "0.08px Arial";
-                                    ctx.textAlign = "center";
-                                    ctx.textBaseline = "bottom";
-                                    ctx.fillText(`${name} | Score: ${score} | HP: ${hp} | (${playerX.toFixed(2)},${playerY.toFixed(2)})`, playerX, playerY - 0.04);
+                                    // ---------------------------
+                                    // Текст игрока с neon outline
+                                    // ---------------------------
+                                    ctx.fillStyle = "#00FFFF";
+                                    ctx.strokeStyle = "#FF00FF";
+                                    ctx.lineWidth = 0.002;
+                                    ctx.fillText(`${name} | Score: ${score} | HP: ${hp}`, playerX, playerY - 0.04);
                                 }
                             }
+
+
 
                             ctx.restore();
                             this.texture2.needsUpdate = true;
